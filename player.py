@@ -12,7 +12,7 @@ sensorAddress = 0x70
 chainPin = 24
 
 chainOldValue = False
-distanceOldValue = 120
+ultraSonicOldValue = 0
 isPlayingPodcast = False
 
 def MpdStop():
@@ -58,27 +58,29 @@ def PlayPodcast():
 
 
 def ReadChainSwitch():
+    global chainOldValue    
     chainNewValue = GPIO.input(chainPin)
     if chainNewValue != chainOldValue:
+        print "ReadChainSwitch(): somebody pulls the chain"
         chainOldValue = chainNewValue
         return True
     else:
         return False
 
 def ReadUltraSonicSensor():
-    bus.write_byte_data(address, 0, 0x51)
+    global ultraSonicOldValue
+    bus.write_byte_data(sensorAddress, 0, 0x51)
     sleep(0.5)
-    range1 = bus.read_byte_data(address, 2) 
-    range2 = bus.read_byte_data(address, 3) 
+    range1 = bus.read_byte_data(sensorAddress, 2) 
+    range2 = bus.read_byte_data(sensorAddress, 3) 
     distanceNewValue = (range1 << 8) + range2
     
-    print "ReadUltraSonicSensor: ", distance
-    if distanceNewValue < distanceOldValue - 5 || distanceNewValue > distanceOldValue + 5 :
-        "ReadUltraSonicSensor: has changed"
-        distanceOldValue = distanceNewValue
-        return True
+    if distanceNewValue < 120 and distanceNewValue > 80: # - 5 || distanceNewValue > distanceOldValue + 5 :
+        #print "ReadUltraSonicSensor(): somebody sits on the toilet: ", distanceNewValue
+        return 1
     else:
-        return False
+        #print "ReadUltraSonicSensor(): somebody leafs the toilet: ", distanceNewValue
+        return 0
 
 
 def Main():
@@ -87,19 +89,18 @@ def Main():
     
     while True:
         if ReadChainSwitch():
-            print "somebody pulls the chain"
             if isPlayingPodcast:
                 MpdNext()
             else:
                 PlayRadio()
-        elif ReadUltraSonicSensor():
-            print "somebody sits on the toilet"
+        elif ReadUltraSonicSensor() == 0:
+            isPodcast = False
+        elif ReadUltraSonicSensor() == 1:
             isPodcast = True
             PlayPodcast()
         #sleep(.5)
-            
-
-
+ 
+ 
 # def Main():
 #     isPodcast = False
 #     while True:
@@ -129,6 +130,4 @@ def Main():
                 
 #         sleep(.5)
 
-
 Main()
-
