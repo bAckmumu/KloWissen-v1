@@ -1,0 +1,69 @@
+#!/usr/bin/python2.7
+
+import RPi.GPIO as GPIO
+from subprocess import call
+from subprocess import check_output
+from time import sleep
+
+
+cornPin = 24
+cornOldValue = False
+isPlaying = False
+
+def MpdStop():
+    print "MpdStop"
+    call(["mpc", "stop"])
+
+def MpdPlay():
+    print "MpdPlay"
+    call(["mpc", "play"])
+
+def MpdNext():
+    print "MpdNext"
+    call(["mpc", "next"])
+
+def MpdAdd( file ):
+    print "MpdAdd: ", file
+    call(["mpc", "clear"])
+    call(["mpc", "add", file])
+
+def MpdState():
+    state = check_output(["mpc"])
+    print "MpdState: ", state 
+    if state.find("[playing]") == -1:
+        print "MpdState: ", False
+        return False
+    else:
+        print "MpdState: ", True
+        return True
+        
+
+def Play():
+    if MpdState() == False:
+        call(["mpc", "listall"])
+        MpdAdd("/")
+        MpdPlay()
+
+
+def ReadCornSwitch():
+    return GPIO.input(chainPin)
+    #global chainOldValue    
+    #chainNewValue = GPIO.input(chainPin)
+    #if chainNewValue != chainOldValue:
+    #    print "ReadChainSwitch(): somebody pulls the chain"
+    #    chainOldValue = chainNewValue
+    #    return True
+    #else:
+    #    return False
+
+
+def Main():
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(chainPin, GPIO.IN)
+    
+    while True: 
+        if ReadCornSwitch():
+            Play()
+        sleep(.5)
+
+Main()
