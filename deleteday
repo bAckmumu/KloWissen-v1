@@ -13,10 +13,15 @@ def DeleteOldFiles( path, age ):
                 os.remove(curpath)
 
 def CleanPodcastDir():
-    DeleteOldFiles( "/home/pi/podcast/Nachrichten", 1 )
-    DeleteOldFiles( "/home/pi/podcast/Hoersuppe", 24 )
-    DeleteOldFiles( "/home/pi/podcast/Ombudsmann", 24 )
+    DeleteOldFiles( "/home/pi/podcast/DetektorKino", 24 )
+    DeleteOldFiles( "/home/pi/podcast/DetektorMusik", 24 )
+    DeleteOldFiles( "/home/pi/podcast/DetektorPolitik", 24 )
+    DeleteOldFiles( "/home/pi/podcast/DetektorWirtschaft", 24 )
+    DeleteOldFiles( "/home/pi/podcast/dradio-Wissenschaft und Bildung", 24 )
     DeleteOldFiles( "/home/pi/podcast/Mahlzeit", 24 )
+    DeleteOldFiles( "/home/pi/podcast/Nachrichten", 1 )
+    DeleteOldFiles( "/home/pi/podcast/NeuesVomKaenguru", 24 )
+    DeleteOldFiles( "/home/pi/podcast/Ombudsmann", 24 )
     DeleteOldFiles( "/home/pi/podcast/ScienceBusters", 24 )
 
 CleanPodcastDir()
