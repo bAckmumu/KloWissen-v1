@@ -1,14 +1,14 @@
 #!/usr/bin/python2.7
 
 import RPi.GPIO as GPIO
-import smbus 
+#import smbus
 from subprocess import call
 from subprocess import check_output
 from time import sleep
 
 
-bus = smbus.SMBus(1) 
-sensorAddress = 0x70
+#bus = smbus.SMBus(1) 
+#sensorAddress = 0x70
 chainPin = 24
 
 chainOldValue = False
@@ -55,6 +55,8 @@ def PlayPodcast():
         #call(["mpc", "listall"])
         isPlayingPodcast = True
         MpdPlay()
+    else:
+        MpdStop()
 
 def ReadChainSwitch():
     global chainOldValue    
@@ -67,29 +69,30 @@ def ReadChainSwitch():
     else:
         return False
 
-def ReadUltraSonicSensor():
-    #global ultraSonicOldValue
-    bus.write_byte_data(sensorAddress, 0, 0x51)
-    sleep(0.5)
-    range1 = bus.read_byte_data(sensorAddress, 2) 
-    range2 = bus.read_byte_data(sensorAddress, 3) 
-    distanceNewValue = (range1 << 8) + range2
+# def ReadUltraSonicSensor():
+#     #global ultraSonicOldValue
+#     bus.write_byte_data(sensorAddress, 0, 0x51)
+#     sleep(0.5)
+#     range1 = bus.read_byte_data(sensorAddress, 2) 
+#     range2 = bus.read_byte_data(sensorAddress, 3) 
+#     distanceNewValue = (range1 << 8) + range2
     
-    if distanceNewValue < 120 and distanceNewValue > 80: # - 5 || distanceNewValue > distanceOldValue + 5 :
-        #print "ReadUltraSonicSensor(): somebody sits on the toilet: ", distanceNewValue
-        return True
-    else:
-        #print "ReadUltraSonicSensor(): somebody leafs the toilet: ", distanceNewValue
-        return False
+#     if distanceNewValue < 120 and distanceNewValue > 80: # - 5 || distanceNewValue > distanceOldValue + 5 :
+#         #print "ReadUltraSonicSensor(): somebody sits on the toilet: ", distanceNewValue
+#         return True
+#     else:
+#         #print "ReadUltraSonicSensor(): somebody leafs the toilet: ", distanceNewValue
+#         return False
 
 def Main():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(chainPin, GPIO.IN)
     
     while True:
-        if ReadUltraSonicSensor():
+        #if ReadUltraSonicSensor():
+        #    PlayPodcast()
+        #el
+        if ReadChainSwitch():
             PlayPodcast()
-        elif ReadChainSwitch():
-            PlayRadio()
 
 Main()
