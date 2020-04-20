@@ -1,13 +1,13 @@
 #!/usr/bin/python2.7
 
 import RPi.GPIO as GPIO
-import smbus 
+import smbus
 from subprocess import call
 from subprocess import check_output
 from time import sleep
 
 
-bus = smbus.SMBus(1) 
+bus = smbus.SMBus(1)
 sensorAddress = 0x70
 chainPin = 24
 
@@ -47,7 +47,7 @@ def PlayRadio():
         MpdPlay()
     else:
         MpdStop()
-        
+
 def PlayPodcast():
     if MpdIsPlaying() == False:
         print "PlayPodcast"
@@ -57,7 +57,7 @@ def PlayPodcast():
         MpdPlay()
 
 def ReadChainSwitch():
-    global chainOldValue    
+    global chainOldValue
     chainNewValue = GPIO.input(chainPin)
     #sleep(1.0)
     if chainNewValue != chainOldValue:
@@ -71,11 +71,11 @@ def ReadUltraSonicSensor():
     #global ultraSonicOldValue
     bus.write_byte_data(sensorAddress, 0, 0x51)
     sleep(0.5)
-    range1 = bus.read_byte_data(sensorAddress, 2) 
-    range2 = bus.read_byte_data(sensorAddress, 3) 
+    range1 = bus.read_byte_data(sensorAddress, 2)
+    range2 = bus.read_byte_data(sensorAddress, 3)
     distanceNewValue = (range1 << 8) + range2
-    
-    if distanceNewValue < 120 and distanceNewValue > 80: # - 5 || distanceNewValue > distanceOldValue + 5 :
+
+    if distanceNewValue < 60 and distanceNewValue > 30: # - 5 || distanceNewValue > distanceOldValue + 5 :
         #print "ReadUltraSonicSensor(): somebody sits on the toilet: ", distanceNewValue
         return True
     else:
@@ -85,7 +85,7 @@ def ReadUltraSonicSensor():
 def Main():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(chainPin, GPIO.IN)
-    
+
     while True:
         if ReadUltraSonicSensor():
             PlayPodcast()
