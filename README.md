@@ -4,8 +4,8 @@ KloWissen-v1
 KloWissen is a Raspberry Pi podcast player. This is the First version of it.
 
 ## Linux applications
-* Music Player Daemon 
-* gPodder
+* mpd (Music Player Daemon) 
+* gPodder https://gpodder.github.io
 
 ## cron Jobs
 * crontab -e
