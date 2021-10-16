@@ -7,67 +7,70 @@ from subprocess import check_output
 from time import sleep
 from datetime import datetime
 
+podcastPath=""
+streamPath= "https://detektor.fm/stream/mp3/musik/"
+
 bus = smbus.SMBus(1)
 sensorAddress = 0x70
 chainPin = 24
-
 chainOldValue = False
 #ultraSonicOldValue = 0
+#isPlayingPodcast = False
 
-isPlayingPodcast = False
+def Stop():
+    # print "Stop"
+    call(["omxplayer", "q"])
 
-def MpdStop():
-    # print "MpdStop"
-    call(["mpc", "stop"])
+def Play( path ):
+    # print "Play"
+    call(["omxplayer", "path"])
 
-def MpdPlay():
-    # print "MpdPlay"
-    call(["mpc", "play"])
+# def MpdNext():
+#     print "MpdNext"
+#     call(["mpc", "next"])
 
-def MpdNext():
-    print "MpdNext"
-    call(["mpc", "next"])
+# def MpdAdd( file ):
+#     # print "MpdAdd: ", file
+#     call(["mpc", "clear"])
+#     call(["mpc", "add", file])
 
-def MpdAdd( file ):
-    # print "MpdAdd: ", file
-    call(["mpc", "clear"])
-    call(["mpc", "add", file])
+def IsPlaying():
+    state = check_output(["omxplayer"])
+    print "IsPlaying: ", state
 
-def MpdIsPlaying():
-    state = check_output(["mpc"])
     if state.find("[playing]") == -1:
         return False
     else:
         return True
 
-def MpdSetVolume():
-    hourOfDay = datetime.now().time().hou
-    print "MpdSetVolume hourOfDay: ", hourOfDay
+# def MpdSetVolume():
+#     hourOfDay = datetime.now().time().hou
+#     print "MpdSetVolume hourOfDay: ", hourOfDay
 
-    if hourOfDay < 8 or hourOfDay > 22: 
-        print "MpdSetVolume: 75"
-        call(["mpc", "volume", "75"])
-    else:
-        print "MpdSetVolume: 100"
-        call(["mpc", "volume", "100"])
+#     if hourOfDay < 8 or hourOfDay > 22: 
+#         print "MpdSetVolume: 75"
+#         call(["mpc", "volume", "75"])
+#     else:
+#         print "MpdSetVolume: 100"
+#         call(["mpc", "volume", "100"])
 
 def PlayRadio():
-    if MpdIsPlaying() == False:
+    if IsPlaying() == False:
         # print "PlayRadio"
-        MpdAdd("https://detektor.fm/stream/mp3/musik/")
-        MpdSetVolume()
-        MpdPlay()
+        # MpdAdd("https://detektor.fm/stream/mp3/musik/")
+        # MpdSetVolume()
+        Play( streamPath )
     else:
-        MpdStop()
+        Stop()
 
 def PlayPodcast():
-    if MpdIsPlaying() == False:
+    if IsPlaying() == False:
         # print "PlayPodcast"
-        MpdAdd("/")
+        # MpdAdd("/")
         #call(["mpc", "listall"])
-        isPlayingPodcast = True
-        MpdSetVolume()
-        MpdPlay()
+        # isPlayingPodcast = True
+        # MpdSetVolume()
+        Play()
 
 def ReadChainSwitch():
     global chainOldValue
