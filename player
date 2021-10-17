@@ -71,7 +71,7 @@ def ReadChainSwitch():
 
 def ReadUltraSonicSensor():
     # bus.write_byte_data(sensorAddress, 0, 0x51)
-    sleep(0.5)
+    # sleep(0.5)
     
     range1 = bus.read_byte_data(sensorAddress, 2)
     print("ReadUltraSonicSensor, range1: ", range1)
@@ -97,6 +97,8 @@ def Main():
     mixer.init()
 
     while True:
+        sleep(1.0)
+
         if ReadUltraSonicSensor():
             PlayPodcast()
         elif ReadChainSwitch():
