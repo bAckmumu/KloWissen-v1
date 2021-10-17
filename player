@@ -73,15 +73,27 @@ def ReadUltraSonicSensor():
     bus.write_byte_data(sensorAddress, 0x00, 0x51)
     sleep(0.12)
     
-    data = bus.read_i2c_block_data(sensorAddress, 0x02, 2)
-    print("ReadUltraSonicSensor, range1: ", data)
+    range1 = bus.read_byte_data(sensorAddress, 2)
+    print("ReadUltraSonicSensor, range1: ", range1)
     
-    # range2 = bus.read_byte_data(sensorAddress, 0x03))
-    # print("ReadUltraSonicSensor, range2: ", range2)
+    range2 = bus.read_byte_data(sensorAddress, 3)
+    print("ReadUltraSonicSensor, range2: ", range2)
     
-    # distanceNewValue = (range1 << 8) + range2
-    distanceNewValue = (data[0]<<8) | data[1]
+    distanceNewValue = (range1 << 8) + range2
     print("ReadUltraSonicSensor, distanceNewValue: ", distanceNewValue)
+    
+    # bus.write_byte_data(sensorAddress, 0x00, 0x51)
+    # sleep(0.12)
+    
+    # data = bus.read_i2c_block_data(sensorAddress, 0x02, 2)
+    # print("ReadUltraSonicSensor, range1: ", data)
+    
+    # # range2 = bus.read_byte_data(sensorAddress, 0x03))
+    # # print("ReadUltraSonicSensor, range2: ", range2)
+    
+    # # distanceNewValue = (range1 << 8) + range2
+    # distanceNewValue = (data[0]<<8) | data[1]
+    # print("ReadUltraSonicSensor, distanceNewValue: ", distanceNewValue)
 
     if distanceNewValue < 60 and distanceNewValue > 30: # - 5 || distanceNewValue > distanceOldValue + 5 :
         #print("ReadUltraSonicSensor(): somebody sits on the toilet: ", distanceNewValue)
@@ -98,11 +110,11 @@ def Main():
     mixer.init()
 
     while True:
-        sleep(1.0)
-
         if ReadUltraSonicSensor():
             PlayPodcast()
         elif ReadChainSwitch():
             PlayRadio()
+
+        sleep(1.0)
 
 Main()
