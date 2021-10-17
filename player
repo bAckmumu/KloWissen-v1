@@ -11,7 +11,7 @@ from pygame import mixer
 mediaPath="/home/pi/gPodder/Downloads"
 streamPath="test.mp3"  #"https://detektor.fm/stream/mp3/musik/"
 
-# bus = smbus.SMBus(1)
+bus = smbus.SMBus(1)
 sensorAddress = 0x70
 chainPin = 24
 chainOldValue = False
@@ -70,18 +70,25 @@ def ReadChainSwitch():
         return False
 
 def ReadUltraSonicSensor():
-    bus = smbus.SMBus(1)
-    bus.write_byte_data(sensorAddress, 0x00, 0x51)
-    sleep(0.12)
     
-    range1 = bus.read_byte_data(sensorAddress, 2)
-    print("ReadUltraSonicSensor, range1: ", range1)
+    bus.write_i2c_block_data(0x70,0x00,[0x51])
+    sleep(0.1)
     
-    range2 = bus.read_byte_data(sensorAddress, 3)
-    print("ReadUltraSonicSensor, range2: ", range2)
+    block = i2c.read_i2c_block_data(address,0x00,4)
+    distance = (block[2]<<8 | block[3])
+    print("ReadUltraSonicSensor, distance: ", distance)
+
+    # bus.write_byte_data(sensorAddress, 0x00, 0x51)
+    # sleep(0.1)
     
-    distanceNewValue = (range1 << 8) + range2
-    print("ReadUltraSonicSensor, distanceNewValue: ", distanceNewValue)
+    # range1 = bus.read_byte_data(sensorAddress, 2)
+    # print("ReadUltraSonicSensor, range1: ", range1)
+    
+    # range2 = bus.read_byte_data(sensorAddress, 3)
+    # print("ReadUltraSonicSensor, range2: ", range2)
+    
+    # distanceNewValue = (range1 << 8) + range2
+    # print("ReadUltraSonicSensor, distanceNewValue: ", distanceNewValue)
     
     # bus.write_byte_data(sensorAddress, 0x00, 0x51)
     # sleep(0.12)
@@ -96,12 +103,12 @@ def ReadUltraSonicSensor():
     # distanceNewValue = (data[0]<<8) | data[1]
     # print("ReadUltraSonicSensor, distanceNewValue: ", distanceNewValue)
 
-    if distanceNewValue < 60 and distanceNewValue > 30: # - 5 || distanceNewValue > distanceOldValue + 5 :
-        #print("ReadUltraSonicSensor(): somebody sits on the toilet: ", distanceNewValue)
-        return True
-    else:
-        #print("ReadUltraSonicSensor(): somebody leafs the toilet: ", distanceNewValue)
-        return False
+    # if distanceNewValue < 60 and distanceNewValue > 30: # - 5 || distanceNewValue > distanceOldValue + 5 :
+    #     #print("ReadUltraSonicSensor(): somebody sits on the toilet: ", distanceNewValue)
+    #     return True
+    # else:
+    #     #print("ReadUltraSonicSensor(): somebody leafs the toilet: ", distanceNewValue)
+    #     return False
 
 def Main():
     GPIO.setmode(GPIO.BCM)
