@@ -73,7 +73,7 @@ def ReadUltraSonicSensor():
     
     bus.write_i2c_block_data(sensorAddress,0x00,[0x51])
     sleep(0.1)
-    block = bus.read_i2c_block_data(address,0x00,6)
+    block = bus.read_i2c_block_data(sensorAddress,0x00,6)
     if(block[0]==6):
         distance = (block[2]<<8 | block[3])
     else:
