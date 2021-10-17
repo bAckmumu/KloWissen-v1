@@ -80,7 +80,7 @@ def ReadUltraSonicSensor():
     # print("ReadUltraSonicSensor, range2: ", range2)
     
     # distanceNewValue = (range1 << 8) + range2
-    distanceNewValue = data[0]<<8) | data[1]
+    distanceNewValue = (data[0]<<8) | data[1]
     print("ReadUltraSonicSensor, distanceNewValue: ", distanceNewValue)
 
     if distanceNewValue < 60 and distanceNewValue > 30: # - 5 || distanceNewValue > distanceOldValue + 5 :
