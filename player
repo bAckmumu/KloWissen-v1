@@ -71,10 +71,10 @@ def ReadChainSwitch():
 
 def ReadUltraSonicSensor():
     
-    bus.write_i2c_block_data(0x70,0x00,[0x51])
+    bus.write_i2c_block_data(sensorAddress,0x00,[0x51])
     sleep(0.1)
     
-    block = i2c.read_i2c_block_data(address,0x00,4)
+    block = bus.read_i2c_block_data(sensorAddress,0x00,4)
     distance = (block[2]<<8 | block[3])
     print("ReadUltraSonicSensor, distance: ", distance)
 
