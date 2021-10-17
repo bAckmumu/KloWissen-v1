@@ -72,8 +72,13 @@ def ReadChainSwitch():
 def ReadUltraSonicSensor():
     bus.write_byte_data(sensorAddress, 0, 0x51)
     sleep(0.5)
+    
     range1 = bus.read_byte_data(sensorAddress, 2)
+    print("ReadUltraSonicSensor, range1: ", range1)
+    
     range2 = bus.read_byte_data(sensorAddress, 3)
+    print("ReadUltraSonicSensor, range2: ", range2)
+    
     distanceNewValue = (range1 << 8) + range2
     print("ReadUltraSonicSensor, distanceNewValue: ", distanceNewValue)
 
