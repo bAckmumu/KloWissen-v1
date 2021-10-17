@@ -40,7 +40,9 @@ def SetVolume():
         mixer.music.set_volume(0.7)
 
 def IsPlaying():
+    # print("IsPlaying")
     isPlaying = mixer.music.get_busy()
+    # print("IsPlaying", isPlaying)
     return isPlaying
 
 def PlayRadio():
