@@ -81,10 +81,10 @@ def ReadUltraSonicSensor():
     # print("ReadUltraSonicSensor, distance: ", distance)
 
     if distance < 60 and distance > 30: # - 5 || distanceNewValue > distanceOldValue + 5 :
-        #print("ReadUltraSonicSensor(): somebody sits on the toilet: ", distance)
+        print("ReadUltraSonicSensor(): somebody sits on the toilet: ", distance)
         return True
     else:
-        #print("ReadUltraSonicSensor(): somebody leafs the toilet: ", distance)
+        print("ReadUltraSonicSensor(): somebody leafs the toilet: ", distance)
         return False
 
 def Main():
