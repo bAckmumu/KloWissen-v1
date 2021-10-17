@@ -1,0 +1,9 @@
+#!/usr/bin/python3
+
+from pydub import AudioSegment
+from pydub.playback import play
+
+print("testplayer")
+
+sound = AudioSegment.from_file("test.mp3", format="mp3")
+play(sound)
