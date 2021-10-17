@@ -42,7 +42,7 @@ def SetVolume():
 def PlayRadio():
     global isPlaying
     # print("PlayRadio")
-    if isPlaying() == False:
+    if isPlaying == False:
         Load( streamPath )
         Play()
         isPlaying = True
@@ -53,7 +53,7 @@ def PlayRadio():
 def PlayPodcast():
     global isPlaying
     # print("PlayPodcast")
-    if isPlaying() == False:
+    if isPlaying == False:
         Load( streamPath )
         Play()
         isPlaying = True
