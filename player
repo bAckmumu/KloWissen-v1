@@ -1,90 +1,75 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 
 import RPi.GPIO as GPIO
 import smbus
-from subprocess import call
-from subprocess import check_output
+# from subprocess import call
+# from subprocess import check_output
 from time import sleep
 from datetime import datetime
+from pygame import mixer
 
-podcastPath=""
-streamPath= "https://detektor.fm/stream/mp3/musik/"
+mediaPath="/home/pi/gPodder/Downloads"
+streamPath="test.mp3"  #"https://detektor.fm/stream/mp3/musik/"
 
 bus = smbus.SMBus(1)
 sensorAddress = 0x70
 chainPin = 24
 chainOldValue = False
-#ultraSonicOldValue = 0
-#isPlayingPodcast = False
+isPlaying = False
 
 def Stop():
-    # print "Stop"
-    call(["omxplayer", "q"])
+    # print("Stop")
+    mixer.music.stop()
 
-def Play( path ):
-    # print "Play"
-    call(["omxplayer", "path"])
+def Play():
+    # print("Play")
+    mixer.music.play()
 
-# def MpdNext():
-#     print "MpdNext"
-#     call(["mpc", "next"])
+def Load( filePath ):
+    # print("Load", filePath) 
+    mixer.music.load(filePath)
 
-# def MpdAdd( file ):
-#     # print "MpdAdd: ", file
-#     call(["mpc", "clear"])
-#     call(["mpc", "add", file])
-
-def IsPlaying():
-    state = check_output(["omxplayer"])
-    print "IsPlaying: ", state
-
-    if state.find("[playing]") == -1:
-        return False
+def SetVolume():
+    hourOfDay = datetime.now().time().hou
+    # print("SetVolume hourOfDay: ", hourOfDay)
+    if hourOfDay < 8 or hourOfDay > 22: 
+        # print("SetVolume, to 70%")
+        mixer.music.set_volume(0.7)
     else:
-        return True
-
-# def MpdSetVolume():
-#     hourOfDay = datetime.now().time().hou
-#     print "MpdSetVolume hourOfDay: ", hourOfDay
-
-#     if hourOfDay < 8 or hourOfDay > 22: 
-#         print "MpdSetVolume: 75"
-#         call(["mpc", "volume", "75"])
-#     else:
-#         print "MpdSetVolume: 100"
-#         call(["mpc", "volume", "100"])
+        # print("SetVolume: 100")
+        mixer.music.set_volume(0.7)
 
 def PlayRadio():
-    if IsPlaying() == False:
-        # print "PlayRadio"
-        # MpdAdd("https://detektor.fm/stream/mp3/musik/")
-        # MpdSetVolume()
-        Play( streamPath )
+    global isPlaying
+    # print("PlayRadio")
+    if isPlaying() == False:
+        Load( streamPath )
+        Play()
+        isPlaying = True
     else:
         Stop()
+        isPlaying = False
 
 def PlayPodcast():
-    if IsPlaying() == False:
-        # print "PlayPodcast"
-        # MpdAdd("/")
-        #call(["mpc", "listall"])
-        # isPlayingPodcast = True
-        # MpdSetVolume()
+    global isPlaying
+    # print("PlayPodcast")
+    if isPlaying() == False:
+        Load( streamPath )
         Play()
+        isPlaying = True
 
 def ReadChainSwitch():
     global chainOldValue
     chainNewValue = GPIO.input(chainPin)
     #sleep(1.0)
     if chainNewValue != chainOldValue:
-        # print "ReadChainSwitch(): somebody pulls the chain"
+        # print("ReadChainSwitch, somebody pulls the chain)s"
         chainOldValue = chainNewValue
         return True
     else:
         return False
 
 def ReadUltraSonicSensor():
-    #global ultraSonicOldValue
     bus.write_byte_data(sensorAddress, 0, 0x51)
     sleep(0.5)
     range1 = bus.read_byte_data(sensorAddress, 2)
@@ -92,15 +77,18 @@ def ReadUltraSonicSensor():
     distanceNewValue = (range1 << 8) + range2
 
     if distanceNewValue < 60 and distanceNewValue > 30: # - 5 || distanceNewValue > distanceOldValue + 5 :
-        #print "ReadUltraSonicSensor(): somebody sits on the toilet: ", distanceNewValue
+        #print("ReadUltraSonicSensor(): somebody sits on the toilet: ", distanceNewValue)
         return True
     else:
-        #print "ReadUltraSonicSensor(): somebody leafs the toilet: ", distanceNewValue
+        #print("ReadUltraSonicSensor(): somebody leafs the toilet: ", distanceNewValue)
         return False
 
 def Main():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(chainPin, GPIO.IN)
+
+    #print("Main, starting the mixer")
+    mixer.init()
 
     while True:
         if ReadUltraSonicSensor():
