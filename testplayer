@@ -1,5 +1,11 @@
 #!/usr/bin/python3
 
+####
+#
+# pydub
+#
+####
+
 # from pydub import AudioSegment
 # from pydub.playback import play
 
@@ -8,10 +14,43 @@
 # sound = AudioSegment.from_file("test.mp3", format="mp3")
 # play(sound)
 
-import pygame
+####
+#
+# pygame
+#
+####
 
-print("testplayer")
-
-pygame.mixer.init()
-pygame.mixer.music.load("test.mp3")
-pygame.mixer.music.play()
+from pygame import mixer
+  
+# Starting the mixer
+mixer.init()
+  
+# Loading the song
+mixer.music.load("test.mp3")
+  
+# Setting the volume
+mixer.music.set_volume(0.7)
+  
+# Start playing the song
+mixer.music.play()
+  
+# infinite loop
+while True:
+      
+    print("Press 'p' to pause, 'r' to resume")
+    print("Press 'e' to exit the program")
+    query = input("  ")
+      
+    if query == 'p':
+  
+        # Pausing the music
+        mixer.music.pause()     
+    elif query == 'r':
+  
+        # Resuming the music
+        mixer.music.unpause()
+    elif query == 'e':
+  
+        # Stop the mixer
+        mixer.music.stop()
+        break
