@@ -15,7 +15,7 @@ bus = smbus.SMBus(1)
 sensorAddress = 0x70
 chainPin = 24
 chainOldValue = False
-isPlaying = False
+# isPlaying = False
 
 def Stop():
     # print("Stop")
@@ -39,24 +39,23 @@ def SetVolume():
         # print("SetVolume: 100")
         mixer.music.set_volume(0.7)
 
+def IsPlaying():
+    isPlaying = mixer.music.get_busy()
+    return isPlaying
+
 def PlayRadio():
-    global isPlaying
     # print("PlayRadio")
-    if isPlaying == False:
+    if IsPlaying() == False:
         Load( streamPath )
         Play()
-        isPlaying = True
     else:
         Stop()
-        isPlaying = False
 
 def PlayPodcast():
-    global isPlaying
     # print("PlayPodcast")
-    if isPlaying == False:
+    if IsPlaying == False:
         Load( streamPath )
         Play()
-        isPlaying = True
 
 def ReadChainSwitch():
     global chainOldValue
