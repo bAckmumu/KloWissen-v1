@@ -74,7 +74,7 @@ def ReadUltraSonicSensor():
     sleep(0.12)
     
     data = bus.read_i2c_block_data(sensorAddress, 0x02, 2)
-    print("ReadUltraSonicSensor, range1: ", range1)
+    print("ReadUltraSonicSensor, range1: ", data)
     
     # range2 = bus.read_byte_data(sensorAddress, 0x03))
     # print("ReadUltraSonicSensor, range2: ", range2)
