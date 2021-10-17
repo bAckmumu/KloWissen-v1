@@ -70,7 +70,7 @@ def ReadChainSwitch():
         return False
 
 def ReadUltraSonicSensor():
-    bus.write_byte_data(sensorAddress, 0, 0x51)
+    # bus.write_byte_data(sensorAddress, 0, 0x51)
     sleep(0.5)
     
     range1 = bus.read_byte_data(sensorAddress, 2)
