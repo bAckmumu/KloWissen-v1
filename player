@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 
+import os
 import RPi.GPIO as GPIO
 import smbus
-# from subprocess import call
-# from subprocess import check_output
-from time import sleep
 from datetime import datetime
 from pygame import mixer
+from time import sleep
 
 mediaPath="/home/pi/gPodder/Downloads"
 streamPath="test.mp3"  #"https://detektor.fm/stream/mp3/musik/"
@@ -56,6 +55,7 @@ def PlayRadio():
 def PlayPodcast():
     print("PlayPodcast")
     if IsPlaying() == False:
+        ReadListOfFiles(mediaPath)
         Load( streamPath )
         Play()
 
@@ -87,6 +87,24 @@ def ReadUltraSonicSensor():
     else:
         print("ReadUltraSonicSensor(): somebody leafs the toilet: ", distance)
         return False
+
+def ReadListOfFiles(dirName):
+    # create a list of file and sub directories 
+    # names in the given directory 
+    listOfFile = os.listdir(dirName)
+    allFiles = list()
+    # Iterate over all the entries
+    for entry in listOfFile:
+        # Create full path
+        fullPath = os.path.join(dirName, entry)
+        # If entry is a directory then get the list of files in this directory 
+        if os.path.isdir(fullPath):
+            allFiles = allFiles + getListOfFiles(fullPath)
+        else:
+            allFiles.append(fullPath)
+                
+    print("ReadListOfFiles, allFiles: ", allFiles)
+    return allFiles
 
 def Main():
     GPIO.setmode(GPIO.BCM)
