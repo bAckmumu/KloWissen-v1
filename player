@@ -54,8 +54,8 @@ def PlayRadio():
         Stop()
 
 def PlayPodcast():
-    # print("PlayPodcast")
-    if IsPlaying == False:
+    print("PlayPodcast")
+    if IsPlaying() == False:
         Load( streamPath )
         Play()
 
