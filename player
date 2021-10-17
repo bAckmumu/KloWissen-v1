@@ -63,7 +63,7 @@ def ReadChainSwitch():
     chainNewValue = GPIO.input(chainPin)
     #sleep(1.0)
     if chainNewValue != chainOldValue:
-        # print("ReadChainSwitch, somebody pulls the chain)s"
+        # print("ReadChainSwitch, somebody pulls the chain)"
         chainOldValue = chainNewValue
         return True
     else:
@@ -75,6 +75,7 @@ def ReadUltraSonicSensor():
     range1 = bus.read_byte_data(sensorAddress, 2)
     range2 = bus.read_byte_data(sensorAddress, 3)
     distanceNewValue = (range1 << 8) + range2
+    print("ReadUltraSonicSensor, distanceNewValue: ", distanceNewValue)
 
     if distanceNewValue < 60 and distanceNewValue > 30: # - 5 || distanceNewValue > distanceOldValue + 5 :
         #print("ReadUltraSonicSensor(): somebody sits on the toilet: ", distanceNewValue)
