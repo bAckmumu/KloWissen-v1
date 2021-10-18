@@ -90,7 +90,7 @@ def ReadChainSwitch():
 
 # https://www.linuxtut.com/en/8e8f385f35976dcc65e8/
 def ReadUltraSonicSensor():
-        bus.write_i2c_block_data(sensorAddress,0x00,[0x51])
+    bus.write_i2c_block_data(sensorAddress,0x00,[0x51])
     sleep(0.1)
     block = bus.read_i2c_block_data(sensorAddress,0x00,6)
     if(block[0]==6):
