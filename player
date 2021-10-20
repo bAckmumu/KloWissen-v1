@@ -17,7 +17,7 @@ bus = smbus.SMBus(1)
 sensorAddress = 0x70
 chainPin = 24
 chainOldValue = False
-currentHour = 24
+currentHour = 0
 
 ####
 #
