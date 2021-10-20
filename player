@@ -120,12 +120,12 @@ def PlayPodcast():
         Load(files[indexToPlay])
         Play()
 
+
 ####
 #
 #   Podcast management
 #
 ####
-
 
 def DownloadPodcasts():
     # print("DownloadPodcasts, update podcast list")
@@ -146,20 +146,20 @@ def DownloadPodcasts():
 # subscribe https://detektor.fm/feeds/mission-energiewende MissionEnergiewende
 
 def CleanPodcastDir():
-    DeleteOldFilesInFolder(os.path.join(mediaPath, "Nachrichten"), 1)
-    DeleteOldFilesInFolder(os.path.join(mediaPath, "Feinkost"), 24)
-    DeleteOldFilesInFolder(os.path.join(mediaPath, "Antritt"), 24)
-    DeleteOldFilesInFolder(os.path.join(mediaPath, "Ombudsmann"), 24)
     DeleteOldFilesInFolder(os.path.join(mediaPath, "Anerzaehlt"), 24)
+    DeleteOldFilesInFolder(os.path.join(mediaPath, "Antritt"), 24)
+    DeleteOldFilesInFolder(os.path.join(mediaPath, "Feinkost"), 24)
     DeleteOldFilesInFolder(os.path.join(mediaPath, "Gartenradio"), 24)
     DeleteOldFilesInFolder(os.path.join(mediaPath, "MissionEnergiewende"), 24)
+    DeleteOldFilesInFolder(os.path.join(mediaPath, "Nachrichten"), 1)
+    DeleteOldFilesInFolder(os.path.join(mediaPath, "Ombudsmann"), 24)
+
 
 ####
 #
 #   Sensors
 #
 ####
-
 
 def ReadChainSwitch():
     global chainOldValue
@@ -173,6 +173,8 @@ def ReadChainSwitch():
         return False
 
 # https://www.linuxtut.com/en/8e8f385f35976dcc65e8/
+
+
 def ReadUltraSonicSensor():
     bus.write_i2c_block_data(sensorAddress, 0x00, [0x51])
     sleep(0.1)
