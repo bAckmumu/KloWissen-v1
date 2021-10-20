@@ -10,101 +10,14 @@ from pygame import mixer
 from subprocess import call
 from time import sleep
 
-mediaPath="/home/pi/gPodder/Downloads"
-streamPath="test.mp3"  #"https://detektor.fm/stream/mp3/musik/"
+mediaPath = "/home/pi/gPodder/Downloads"
+streamPath = "test.mp3"  # "https://detektor.fm/stream/mp3/musik/"
 
 bus = smbus.SMBus(1)
 sensorAddress = 0x70
 chainPin = 24
 chainOldValue = False
-# isPlaying = False
-
-####
-#
-#   Player
-#
-####
-
-def Stop():
-    # print("Stop")
-    mixer.music.stop()
-
-def Play():
-    # print("Play")
-    mixer.music.play()
-
-def Load( filePath ):
-    # print("Load", filePath) 
-    mixer.music.load(filePath)
-
-def SetVolume():
-    hourOfDay = datetime.now().time().hou
-    # print("SetVolume hourOfDay: ", hourOfDay)
-    if hourOfDay < 8 or hourOfDay > 22: 
-        # print("SetVolume, to 70%")
-        mixer.music.set_volume(0.7)
-    else:
-        # print("SetVolume: 100")
-        mixer.music.set_volume(0.7)
-
-def IsPlaying():
-    # print("IsPlaying")
-    isPlaying = mixer.music.get_busy()
-    # print("IsPlaying", isPlaying)
-    return isPlaying
-
-def PlayRadio():
-    # print("PlayRadio")
-    if IsPlaying() == False:
-        Load( streamPath )
-        Play()
-    else:
-        Stop()
-
-def PlayPodcast():
-    print("PlayPodcast")
-    if IsPlaying() == False:
-        files = ReadListOfFiles(mediaPath)
-        indexToPlay = random.randint(0,len(files)-1)
-        print("PlayPodcast, indexToPlay: ", indexToPlay)
-
-        Load( files[indexToPlay] )
-        Play()
-
-####
-#
-#   Sensors
-#
-####
-
-def ReadChainSwitch():
-    global chainOldValue
-    chainNewValue = GPIO.input(chainPin)
-    #sleep(1.0)
-    if chainNewValue != chainOldValue:
-        # print("ReadChainSwitch, somebody pulls the chain)"
-        chainOldValue = chainNewValue
-        return True
-    else:
-        return False
-
-# https://www.linuxtut.com/en/8e8f385f35976dcc65e8/
-def ReadUltraSonicSensor():
-    bus.write_i2c_block_data(sensorAddress,0x00,[0x51])
-    sleep(0.1)
-    block = bus.read_i2c_block_data(sensorAddress,0x00,6)
-    if(block[0]==6):
-        distance = (block[2]<<8 | block[3])
-    else:
-        distance = (block[2]<<8 | block[3]) + block[4]
-    # print("ReadUltraSonicSensor, distance: ", distance)
-
-    if distance < 60 and distance > 30: # - 5 || distanceNewValue > distanceOldValue + 5 :
-        print("ReadUltraSonicSensor(): somebody sits on the toilet: ", distance)
-        return True
-    else:
-        print("ReadUltraSonicSensor(): somebody leafs the toilet: ", distance)
-        return False
+currentHour = 24
 
 ####
 #
@@ -112,7 +25,9 @@ def ReadUltraSonicSensor():
 #
 ####
 
-#https://thispointer.com/python-how-to-get-list-of-files-in-directory-and-sub-directories/
+# https://thispointer.com/python-how-to-get-list-of-files-in-directory-and-sub-directories/
+
+
 def ReadListOfFiles(dirName):
     listOfFile = os.listdir(dirName)
     allFiles = list()
@@ -125,12 +40,156 @@ def ReadListOfFiles(dirName):
     # print("ReadListOfFiles, allFiles: ", allFiles)
     return allFiles
 
+
+def IsNextHour():
+    global currentHour
+    nextHour = datetime.now().hour
+    if currentHour < nextHour:
+        currentHour = nextHour
+        return True
+    else:
+        return False
+
+
+def DeleteOldFilesInFolder(path, age):
+    #print("DeleteOldFilesInFolder, path: ", path)
+    for dirpath, dirname, filenames in os.walk(path):
+        for old_file in filenames:
+            curpath = os.path.join(dirpath, old_file)
+            file_modified = datetime.datetime.fromtimestamp(
+                os.path.getmtime(curpath))
+            if datetime.datetime.now() - file_modified > datetime.timedelta(hours=age):
+                os.remove(curpath)
+
+####
+#
+#   Player
+#
+####
+
+
+def Stop():
+    # print("Stop")
+    mixer.music.stop()
+
+
+def Play():
+    # print("Play")
+    mixer.music.play()
+
+
+def Load(filePath):
+    # print("Load", filePath)
+    mixer.music.load(filePath)
+
+
+def SetVolume():
+    hourOfDay = datetime.now().time().hou
+    # print("SetVolume hourOfDay: ", hourOfDay)
+    if hourOfDay < 8 or hourOfDay > 22:
+        # print("SetVolume, to 70%")
+        mixer.music.set_volume(0.7)
+    else:
+        # print("SetVolume: 100")
+        mixer.music.set_volume(0.7)
+
+
+def IsPlaying():
+    # print("IsPlaying")
+    isPlaying = mixer.music.get_busy()
+    # print("IsPlaying", isPlaying)
+    return isPlaying
+
+
+def PlayRadio():
+    # print("PlayRadio")
+    if IsPlaying() == False:
+        Load(streamPath)
+        Play()
+    else:
+        Stop()
+
+
+def PlayPodcast():
+    print("PlayPodcast")
+    if IsPlaying() == False:
+        files = ReadListOfFiles(mediaPath)
+        indexToPlay = random.randint(0, len(files)-1)
+        print("PlayPodcast, indexToPlay: ", indexToPlay)
+
+        Load(files[indexToPlay])
+        Play()
+
+####
+#
+#   Podcast management
+#
+####
+
+
 def DownloadPodcasts():
-    # print("update podcast list")
+    # print("DownloadPodcasts, update podcast list")
     call(["gpo", "update"])
 
-    # print("download podcast list")
+    # print("DownloadPodcasts, download podcast list")
     call(["gpo", "download"])
+
+
+# Subscriptions in gPodder
+#
+# subscribe https://www.deutschlandfunk.de/podcast-nachrichten.1257.de.podcast.xml Nachrichten
+# subscribe https://detektor.fm/feeds/feinkost-der-food-podcast Feinkost
+# subscribe https://detektor.fm/feeds/antritt Antritt
+# subscribe http://static.orf.at/podcast/fm4/fm4_ombudsmann.xml Ombudsmann
+# subscribe  https://anerzaehlt.net/feed/mp3/ Anerzaehlt
+# subscribe https://feeds.detektor.fm/gartenradio Gartenradio
+# subscribe https://detektor.fm/feeds/mission-energiewende MissionEnergiewende
+
+def CleanPodcastDir():
+    DeleteOldFilesInFolder(os.path.join(mediaPath, "Nachrichten"), 1)
+    DeleteOldFilesInFolder(os.path.join(mediaPath, "Feinkost"), 24)
+    DeleteOldFilesInFolder(os.path.join(mediaPath, "Antritt"), 24)
+    DeleteOldFilesInFolder(os.path.join(mediaPath, "Ombudsmann"), 24)
+    DeleteOldFilesInFolder(os.path.join(mediaPath, "Anerzaehlt"), 24)
+    DeleteOldFilesInFolder(os.path.join(mediaPath, "Gartenradio"), 24)
+    DeleteOldFilesInFolder(os.path.join(mediaPath, "MissionEnergiewende"), 24)
+
+####
+#
+#   Sensors
+#
+####
+
+
+def ReadChainSwitch():
+    global chainOldValue
+    chainNewValue = GPIO.input(chainPin)
+    # sleep(1.0)
+    if chainNewValue != chainOldValue:
+        # print("ReadChainSwitch, somebody pulls the chain)"
+        chainOldValue = chainNewValue
+        return True
+    else:
+        return False
+
+# https://www.linuxtut.com/en/8e8f385f35976dcc65e8/
+def ReadUltraSonicSensor():
+    bus.write_i2c_block_data(sensorAddress, 0x00, [0x51])
+    sleep(0.1)
+    block = bus.read_i2c_block_data(sensorAddress, 0x00, 6)
+    if(block[0] == 6):
+        distance = (block[2] << 8 | block[3])
+    else:
+        distance = (block[2] << 8 | block[3]) + block[4]
+    # print("ReadUltraSonicSensor, distance: ", distance)
+
+    if distance < 60 and distance > 30:
+        # print("ReadUltraSonicSensor, somebody sits on the toilet: ", distance)
+        return True
+    else:
+        # print("ReadUltraSonicSensor, somebody leafs the toilet: ", distance)
+        return False
+
 
 ####
 #
@@ -150,7 +209,10 @@ def Main():
             PlayPodcast()
         elif ReadChainSwitch():
             PlayRadio()
+        elif IsNextHour():
+            DownloadPodcasts()
 
         sleep(1.0)
+
 
 Main()
