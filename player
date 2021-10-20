@@ -44,7 +44,7 @@ def ReadListOfFiles(dirName):
 def IsNextHour():
     global currentHour
     nextHour = datetime.now().hour
-    if currentHour < nextHour:
+    if currentHour != nextHour:
         currentHour = nextHour
         return True
     else:
