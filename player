@@ -6,6 +6,7 @@ import RPi.GPIO as GPIO
 import smbus
 
 from datetime import datetime
+from datetime import timedelta
 from pygame import mixer
 from subprocess import call
 from time import sleep
@@ -58,7 +59,7 @@ def DeleteOldFilesInFolder(path, age):
             curpath = os.path.join(dirpath, old_file)
             file_modified = datetime.fromtimestamp(
                 os.path.getmtime(curpath))
-            if datetime.now() - file_modified > datetime.timedelta(hours=age):
+            if datetime.now() - file_modified > timedelta(hours=age):
                 print("DeleteOldFilesInFolder, curpath: ", curpath)
                 os.remove(curpath)
 
