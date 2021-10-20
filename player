@@ -59,6 +59,7 @@ def DeleteOldFilesInFolder(path, age):
             file_modified = datetime.datetime.fromtimestamp(
                 os.path.getmtime(curpath))
             if datetime.datetime.now() - file_modified > datetime.timedelta(hours=age):
+                print("DeleteOldFilesInFolder, curpath: ", curpath)
                 os.remove(curpath)
 
 ####
@@ -111,11 +112,11 @@ def PlayRadio():
 
 
 def PlayPodcast():
-    print("PlayPodcast")
+    # print("PlayPodcast")
     if IsPlaying() == False:
         files = ReadListOfFiles(mediaPath)
         indexToPlay = random.randint(0, len(files)-1)
-        print("PlayPodcast, indexToPlay: ", indexToPlay)
+        # print("PlayPodcast, indexToPlay: ", indexToPlay)
 
         Load(files[indexToPlay])
         Play()
@@ -128,10 +129,8 @@ def PlayPodcast():
 ####
 
 def DownloadPodcasts():
-    # print("DownloadPodcasts, update podcast list")
+    print("DownloadPodcasts")
     call(["gpo", "update"])
-
-    # print("DownloadPodcasts, download podcast list")
     call(["gpo", "download"])
 
 
@@ -146,6 +145,7 @@ def DownloadPodcasts():
 # subscribe https://detektor.fm/feeds/mission-energiewende MissionEnergiewende
 
 def CleanPodcastDir():
+    print("CleanPodcastDir")
     DeleteOldFilesInFolder(os.path.join(mediaPath, "Anerzaehlt"), 24)
     DeleteOldFilesInFolder(os.path.join(mediaPath, "Antritt"), 24)
     DeleteOldFilesInFolder(os.path.join(mediaPath, "Feinkost"), 24)
@@ -212,6 +212,7 @@ def Main():
         elif ReadChainSwitch():
             PlayRadio()
         elif IsNextHour():
+            CleanPodcastDir()
             DownloadPodcasts()
 
         sleep(1.0)
