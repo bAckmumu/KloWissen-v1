@@ -13,3 +13,10 @@ pygame is used for audio playback
 
 ### Phython Skripte
 * player
+
+### Starting the player
+`./player > player.log &`
+
+`jobs -l`
+
+`kill -1 `

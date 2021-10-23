@@ -12,7 +12,7 @@ from subprocess import call
 from time import sleep
 
 mediaPath = "/home/pi/gPodder/Downloads"
-streamPath = "test.mp3"  # "https://detektor.fm/stream/mp3/musik/"
+streamPath = "/home/pi/podcast/RunToTheHills.m4a"  # "https://detektor.fm/stream/mp3/musik/"
 
 bus = smbus.SMBus(1)
 sensorAddress = 0x70
