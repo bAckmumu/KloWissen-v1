@@ -172,7 +172,7 @@ def ReadUltraSonicSensor():
         distance = (block[2] << 8 | block[3]) + block[4]
     # print("ReadUltraSonicSensor, distance: ", distance)
 
-    if distance < 50: # and distance > 30:
+    if distance < 70: # and distance > 30:
         # print("ReadUltraSonicSensor, somebody sits on the toilet: ", distance)
         return True
     else:
