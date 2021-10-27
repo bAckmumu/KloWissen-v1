@@ -8,6 +8,8 @@ KloWissen is a Raspberry Pi podcast player. This is the First version of it.
 `sudo apt install gpodder`
 https://gpodder.github.io
 
+`gpo`
+
 ## Python 
 pygame is used for audio playback
 
@@ -16,6 +18,8 @@ pygame is used for audio playback
 
 ### Starting the player
 `./player > player.log &`
+
+`nohup ./player &`
 
 `jobs -l`
 

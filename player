@@ -60,7 +60,7 @@ def DeleteOldFilesInFolder(path, age):
             file_modified = datetime.fromtimestamp(
                 os.path.getmtime(curpath))
             if datetime.now() - file_modified > timedelta(hours=age):
-                print("DeleteOldFilesInFolder, curpath: ", curpath)
+                # print("DeleteOldFilesInFolder, curpath: ", curpath)
                 os.remove(curpath)
 
 ####
@@ -130,7 +130,7 @@ def PlayPodcast():
 ####
 
 def DownloadPodcasts():
-    print("DownloadPodcasts")
+    # print("DownloadPodcasts")
     call(["gpo", "update"])
     call(["gpo", "download"])
 
@@ -138,22 +138,19 @@ def DownloadPodcasts():
 # Subscriptions in gPodder
 #
 # subscribe https://www.deutschlandfunk.de/podcast-nachrichten.1257.de.podcast.xml Nachrichten
-# subscribe https://detektor.fm/feeds/feinkost-der-food-podcast Feinkost
-# subscribe https://detektor.fm/feeds/antritt Antritt
+# subscribe https://www.dinowitz.de/feed/mp3/ Dinowitz
 # subscribe http://static.orf.at/podcast/fm4/fm4_ombudsmann.xml Ombudsmann
-# subscribe  https://anerzaehlt.net/feed/mp3/ Anerzaehlt
-# subscribe https://feeds.detektor.fm/gartenradio Gartenradio
+# subscribe https://feeds.theincomparable.com/robot RobotOrNot
+# subscribe https://detektor.fm/feeds/feinkost-der-food-podcast Feinkost
 # subscribe https://detektor.fm/feeds/mission-energiewende MissionEnergiewende
 
+
 def CleanPodcastDir():
-    print("CleanPodcastDir")
-    DeleteOldFilesInFolder(os.path.join(mediaPath, "Anerzaehlt"), 24)
-    DeleteOldFilesInFolder(os.path.join(mediaPath, "Antritt"), 24)
-    DeleteOldFilesInFolder(os.path.join(mediaPath, "Feinkost"), 24)
-    DeleteOldFilesInFolder(os.path.join(mediaPath, "Gartenradio"), 24)
-    DeleteOldFilesInFolder(os.path.join(mediaPath, "MissionEnergiewende"), 24)
+    # print("CleanPodcastDir")
+    # DeleteOldFilesInFolder(os.path.join(mediaPath, "Feinkost"), 24)
+    # DeleteOldFilesInFolder(os.path.join(mediaPath, "MissionEnergiewende"), 24)
     DeleteOldFilesInFolder(os.path.join(mediaPath, "Nachrichten"), 1)
-    DeleteOldFilesInFolder(os.path.join(mediaPath, "Ombudsmann"), 24)
+    # DeleteOldFilesInFolder(os.path.join(mediaPath, "Ombudsmann"), 24)
 
 
 ####
