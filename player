@@ -134,17 +134,6 @@ def DownloadPodcasts():
     call(["gpo", "update"])
     call(["gpo", "download"])
 
-
-# Subscriptions in gPodder
-#
-# subscribe https://www.deutschlandfunk.de/podcast-nachrichten.1257.de.podcast.xml Nachrichten
-# subscribe https://www.dinowitz.de/feed/mp3/ Dinowitz
-# subscribe http://static.orf.at/podcast/fm4/fm4_ombudsmann.xml Ombudsmann
-# subscribe https://feeds.theincomparable.com/robot RobotOrNot
-# subscribe https://detektor.fm/feeds/feinkost-der-food-podcast Feinkost
-# subscribe https://detektor.fm/feeds/mission-energiewende MissionEnergiewende
-
-
 def CleanPodcastDir():
     # print("CleanPodcastDir")
     # DeleteOldFilesInFolder(os.path.join(mediaPath, "Feinkost"), 24)
@@ -183,7 +172,7 @@ def ReadUltraSonicSensor():
         distance = (block[2] << 8 | block[3]) + block[4]
     # print("ReadUltraSonicSensor, distance: ", distance)
 
-    if distance < 60 and distance > 30:
+    if distance < 50: # and distance > 30:
         # print("ReadUltraSonicSensor, somebody sits on the toilet: ", distance)
         return True
     else:
